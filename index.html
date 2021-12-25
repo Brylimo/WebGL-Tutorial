@@ -1,0 +1,581 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>WebGL Tutorial</title>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <script type="text/javascript" src="gl-matrix.js"></script>
+    <script type="text/javascript" src="script.js"> </script>
+    <style>
+        *,
+        *::after,
+        *::before {
+            margin: 0;
+            padding: 0;
+            box-sizing: inherit;
+        }
+
+        html {
+            font-size: 62.5%; /* 1rem is 10px from now */
+        }
+
+        body {
+            box-sizing: border-box;
+            font-family: sans-serif;
+            font-weight: 400;
+            line-height: 1.7;
+            padding: 3rem;
+        }
+
+       .header {
+            height: 55vh;
+            background-image: url(./images/header2.jpg);
+            background-size: cover;
+            background-position: top;
+            position: relative;
+        }
+
+        .heading-primary {
+            color: #fff;
+            text-transform: uppercase;
+            margin-bottom: 6rem; }
+
+		.heading-primary:last-child {
+            color: #fff;
+            text-transform: uppercase;
+            margin-bottom: 0rem;
+		}
+        .heading-primary--main {
+            display: block;
+            font-size: 6rem;
+            font-weight: 400;
+            letter-spacing: 3.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .heading-primary--sub {
+            display: block;
+            font-size: 2rem;
+            font-weight: 600;
+            letter-spacing: 1.35rem;
+        }
+		
+		.heading-secondary {
+			font-size: 3.5rem;
+			text-transform: uppercase;
+			font-weight: 700;
+			display: inline-block;
+			background-image: linear-gradient(to right, #f9b71c, #e94715);
+			background-clip: text;
+			-webkit-background-clip: text;
+			color: transparent;
+			letter-spacing: .2rem;
+			transition: all .2s;
+		}
+
+		.heading-secondary2 {
+			font-size: 4.5rem;
+			text-transform: uppercase;
+			font-weight: 700;
+			display: inline-block;
+			background-clip: text;
+			-webkit-background-clip: text;
+			color: black;
+			letter-spacing: .2rem;
+			transition: all .2s;
+		}
+
+		.heading-tertiary {
+			font-size: 1.6rem;
+			font-weight: 700;
+			text-transform: uppercase; }
+
+        .header-textbox {
+            position: absolute;
+            top: 40%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+        }
+
+		.paragraph {
+			font-size: 1.6rem;
+		}
+
+		.u-center-text {
+ 			 text-align: center;
+		}
+
+		.u-margin-bottom-small {
+			margin-bottom: 1.5rem;
+		}
+
+		.u-margin-bottom-medium {
+			margin-bottom: 4rem;
+		}
+
+		.u-margin-bottom-big {
+			margin-bottom: 8rem;
+		}
+
+		.section-about {
+			background-color: #f7f7f7;
+			padding: 20rem 0;
+			margin-top: -20vh; }
+
+		.section-experiment {
+			padding: 15rem	 0;
+			background-image: linear-gradient(to right bottom, rgba(249, 183, 28, 0.8), rgba(233, 71, 21, 0.8));
+			margin-top: -10rem;
+		}
+
+		.experiment {
+			background-image: linear-gradient(105deg, rgba(255, 255, 255, 0.9) 0%, rgba(255, 255, 255, 0.9) 50%, transparent 50%), url(./images/block.jpg);
+			background-size: 100%;
+			border-radius: 3px;
+			box-shadow: 0 1.5rem 4rem rgba(0, 0, 0, 0.2);
+			height: 50rem;
+		}
+
+		.experiment2 {
+			position: absolute;
+			top: 50%;
+			left: 50%;
+			transform: translate(-50%, -50%);
+		}
+
+		.container {
+			height: 60rem;
+			position: relative;
+			width: 100%;
+		}
+
+		.pre-canvas {
+			position: relative;
+		}
+
+		.loc {
+			height: 100%;
+			text-align: center;
+		}
+
+		.size {
+			font-size: 5rem;
+			font-weight: 700;
+		}
+
+		.row {
+			max-width: 114rem;
+			margin: 0 auto; }
+
+		.row:not(:last-child) {
+			margin-bottom: 8rem; }
+
+		.row::after {
+			content: "";
+			display: table;
+			clear: both; }
+
+		.row [class^="col-"] {
+    		float: left; }
+
+		.row [class^="col-"]:not(:last-child) {
+      		margin-right: 6rem; }
+
+		.row .col-1-of-2 {
+			width: calc((100% - 6rem) / 2); }
+
+		.row .col-1-of-3 {
+			width: calc((100% - 2 * 6rem) / 3); }
+
+		.row .col-2-of-3 {
+			width: calc(2 * ((100% - 2 * 6rem) / 3) + 6rem); }
+
+		.row .col-1-of-4 {
+			width: calc((100% - 3 * 6rem) / 4); }
+
+		.row .col-2-of-4 {
+			width: calc(2 * ((100% - 3 * 6rem) / 4) + 6rem); }
+
+		.row .col-3-of-4 {
+    		width: calc(3 * ((100% - 3 * 6rem) / 4) + 2 * 6rem); }
+
+		code {
+			background-color: #eee;
+			border-radius: .3rem;
+			font-family: courier, monospace;
+			padding: 0 .3rem;
+		}
+
+		.codebox {
+			background-color: #eee;
+			border-left-style: solid;
+			border-left-color: #00458b;
+			border-left-width: .6rem;
+			line-height: 1.7;
+			width: 100%;
+			height: 40rem;
+			font-size: medium;
+			padding: 2.4rem 2.4rem;
+			max-width: 100%;
+		}
+
+		.code2 {
+			font-family: courier, monospace;
+			padding: 0 .3rem;
+		}
+
+		.keyword {
+			color: #00458b;
+		}
+
+		.function {
+			color: #b54248;
+		}
+
+		.constant {
+			color: #95353a;
+		}
+
+		.comment {
+			color: #170;
+		}
+
+		.button {
+			padding: 15px 32px;
+			text-align: center;
+			text-decoration: none;
+			display: block;
+			font-size: 16px;
+			margin-left: auto;
+			margin-right: auto;
+		}
+
+		.font-pro {
+			font-size: 1.5rem;
+		}
+    </style>
+</html>
+
+<body onload="main()">
+    <header class="header">
+        <div class="header-textbox">
+            <h1 class="heading-primary">
+                <span class="heading-primary--main">WebGL Tutorial</span>
+                <span class="heading-primary--sub">How to do texture mapping</span>
+            </h1>
+    </header>
+
+    <main>
+        <section class="section-about" style="padding-bottom:15rem;">
+			<div class="u-center-text u-margin-bottom-big">
+				<h2 class = "heading-secondary">
+					Before we begin our tutorial..
+				</h2>
+			</div>
+
+			<div class="row">
+				<div class="col-1-of-2">
+					<h3 class="heading-tertiary u-margin-bottom-small">What on earth is a texture mapping?</h3>
+					<p class="paragraph" style="margin-bottom:8rem;">There might be some of you who already have heard of this term before. Texture mapping is basically using an image to influence the color of a fragment. Simply put, You can pick out any image you want and map it to the object you made. 
+					There are numerous mapping methods widely used in computer graphics worlds including cylindrical mapping, spherical mapping and whatnots but we are going to deal with only projection mapping in this tutorial as WebGL only provides projection mapping and box mapping.
+					</p>
+
+					<h3 class="heading-tertiary u-margin-bottom-small">Preparation</h3>
+					<p class="paragraph">Before we begin with our tutorial, there is something that you need to prepare. We are going to use a cube model in this tutorial from beginning to end so you need to prepare your own cube model. If you have your own model you made using WebGL, you may use that model to follow this tutorial.
+										For the purpose of convenience, we provide a cube model on the left which you can rotate using your mouse. 
+					</p>
+				</div>
+				
+				<div class="col-1-of-2">
+					<div class="pre-canvas">
+						<canvas id="canvas1" style="border: none;" width="600" height="600"></canvas>
+					</div>
+				</div>
+			</div>
+        </section>
+
+		<section class="section-about" style="padding-top: 12rem; padding-bottom:15rem;">
+			<div class="u-center-text u-margin-bottom-big">
+				<h2 class = "heading-secondary">
+					Alright, Let's begin!
+				</h2>
+			</div>
+
+			<div class="row">
+				<div class="col-1-of-2">
+					<h3 class="heading-tertiary u-margin-bottom-small">1. Send a texture image to GPU</h3>
+					<p class="paragraph"> First, we need to prepare a texture image. Of course, it doesn't have to be an image. It can be an array contains color information or assorted videos.
+						However, we're gonna just use an image in our code snippet because it is very commonly used. After your image is set, you gotta transform it into a JavaScript object so that our program can deal with it.
+						Next, we gotta make a texture object. This can be simply done through <code>gl.createTexture()</code>. 
+						Finally, we gotta bind a texture object and send it to GPU and I think there's some considerations that we must go over. First of all, you must wait till your image is completely loaded and then start binding and sending unless these codes could be improperly executed.
+						This is due to the possibility that your image is too big to be handled in a short amount of time. For this reason, we will presume our second snippet code is also executed inside the <code>image.addEventListener()</code> function.
+						Secondly, you might wonder what do we use the <code>gl.generateMipmap()</code> for. To properly understand its usage, you shoud know about the mipmap.
+						Mipmap is basically replicating original texture image in many different sizes for the purpose of using them when the smaller version of texture images are needed.
+						As you know, the object can be magnified or minimized in WebGL and the size of texture image can be changed accordingly. Mipmap exists for this situation as it let the GPU to prepare several different sizes of copies of texture images.
+					</p>
+				</div>
+
+				<div class="col-1-of-2">
+					<div class="codebox">
+						<div class="code2">
+							<p><span class="keyword">var</span> image = <span class="keyword">new</span> <span class="function">Image</span>();<br/>
+							image.src = <span class="comment">"bluhbluh.png"</span><br/>
+							tex = gl.<span class="function">createTexture</span>();<br/>
+							image.<span class="function">addEventListener</span>('load', <span class="keyword">function</span>() {<br/>
+							&nbsp;&nbsp;&nbsp;&nbsp;gl.<span class="function">bindTexture</span>(gl.<span class="constant">TEXTURE_2D</span>, tex);<br/>
+							&nbsp;&nbsp;&nbsp;&nbsp;gl.<span class="function">texImage2D</span>(gl.<span class="constant">TEXTURE_2D</span>, 0, gl.<span class="constant">RGBA</span>, gl.<span class="constant">RGBA</span>, gl.<span class="constant">UNSIGNED_BYTE</span>, image);<br/>
+							&nbsp;&nbsp;&nbsp;&nbsp;gl.<span class="function">generateMipmap</span>(gl.<span class="constant">TEXTURE_2D</span>); });<br/>
+							&nbsp;&nbsp;&nbsp;&nbsp;<spna class="comment">//...(there's more code here!)</spna><br/>
+							})</p>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div class="row">
+				<div class="col-1-of-2">
+					<h3 class="heading-tertiary u-margin-bottom-small">2. Set the parameters</h3>
+					<p class="paragraph"> As I mentioned earlier, Objects can be magnified or minimized and the size of texture images change accordingly.
+						WebGL provides some built-in parameters for these situations so if you properly know them and use them, you can implement way fancier texture mapping.
+						Normally, we set parameters for four cases which are <code>gl.TEXTURE_MIN_FILTER</code>, <code>gl.TEXTURE_MAG_FILTER</code>, <code>gl.TEXTURE_WRAP_S</code> and <code>gl.TEXTURE_WRAP_T</code>. 
+						In other words, you can set parameters for the cases when the texture image is minimized or magnified, when the texture image is unfit to the mapping object in s direction or t direction.
+					</p>
+				</div>
+
+				<div class="col-1-of-2">
+					<div class="codebox" style="height:30rem;">
+						<div class="code2">
+							<p>gl.<span class="function">texParameteri</span>(gl.<span class="constant">TEXTURE_2D</span>, gl.<span class="constant">TEXTURE_MIN_FILTER</span>, gl.<span class="constant">LINEAR</span>);<br/>
+							gl.<span class="function">texParameteri</span>(gl.<span class="constant">TEXTURE_2D</span>, gl.<span class="constant">TEXTURE_MAG_FILTER</span>, gl.<span class="constant">NEAREST</span>);<br/>
+							gl.<span class="function">texParameteri</span>(gl.<span class="constant">TEXTURE_2D</span>, gl.<span class="constant">TEXTURE_WRAP_S</span>, gl.<span class="constant">REPEAT</span>);<br/>
+							gl.<span class="function">texParameteri</span>(gl.<span class="constant">TEXTURE_2D</span>, gl.<span class="constant">TEXTURE_WRAP_T</span>, gl.<span class="constant">REPEAT</span>);<br/></p>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div class="row">
+				<div class="col-1-of-2">
+					<h3 class="heading-tertiary u-margin-bottom-small">3. vertex shader</h3>
+					<p class="paragraph">The job of the vertex shader in the texture mapping is simple. The only thing it does is uploading the information of uv coordinate and sending it to fragment shader using varying. That's all!
+					</p>
+				</div>
+				<div class="col-1-of-2">
+					<div class="codebox" style="height:50rem;">
+						<div class="code2">
+							<p><span class="keyword">const</span> vsSource = <span class="comment">`</span><br/>
+							<span class="comment">attribute highp vec4 myVertex;</span><br/>
+							<span class="comment">attribute highp vec4 myColor;</span><br/>
+							<span class="comment">attribute highp vec2 myUV;</span><br/>
+							<span class="comment">uniform mediump mat4 mMat;</span><br/>
+							<span class="comment">uniform mediump mat4 vMat;</span><br/>
+							<span class="comment">uniform mediump mat4 pMat;</span><br/>
+							<span class="comment">varying  highp vec4 col;</span><br/>
+							<span class="comment">varying  highp vec2 uv;</span><br/>
+							<span class="comment">void main(void)</span><br/>
+							<span class="comment">{</span><br/>
+							<span class="comment">&nbsp;&nbsp;&nbsp;&nbsp;gl_Position = pMat * vMat * mMat * myVertex;</span><br/>
+							<span class="comment">&nbsp;&nbsp;&nbsp;&nbsp;gl_PointSize = 8.0;</span><br/>
+							<span class="comment">&nbsp;&nbsp;&nbsp;&nbsp;col = myColor;</span><br/>
+							<span class="comment">&nbsp;&nbsp;&nbsp;&nbsp;uv = myUV;</span><br/>
+							<span class="comment">}</span><br/>
+							<span class="comment">`</span>;</p>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div class="row">
+				<div class="col-1-of-2">
+					<h3 class="heading-tertiary u-margin-bottom-small">4. fragment shader</h3>
+					<p class="paragraph">Now fragment shader got the uv information from the vertex shader through the varying variable. This simply can be translated that there's gonna be an uv information per fragment.
+						Now the job we gotta do is to refine this information and map it to our object. By using built-in <code>texture2D()</code> function, we can easily fetch the texel(that is, the pixel within the texture) data and compute the fragment's color.
+					</p>
+				</div>
+				<div class="col-1-of-2">
+					<div class="codebox" style="height:28rem;">
+						<div class="code2">
+							<p><span class="keyword">const</span> fsSource = <span class="comment">`</span><br/>
+							<span class="comment">varying highp vec4 col;</span><br/>
+							<span class="comment">varying highp vec2 uv;</span><br/>
+							<span class="comment">uniform sampler2D tex;</span><br/>
+							<span class="comment">void main(void)</span><br/>
+							<span class="comment">{</span><br/>
+							<span class="comment">&nbsp;&nbsp;&nbsp;&nbsp;gl_FragColor = texture2D(tex, uv);</span><br/>
+							<span class="comment">}</span><br/>
+						<span class="comment">`</span>;</p>
+						</div>
+					</div>
+				</div>
+			</div>
+		</section>
+
+		<section class="section-about" style="padding-top: 12rem;">
+			<div class="u-center-text u-margin-bottom-big">
+				<h2 class = "heading-secondary">
+					How about HTML canvas?
+				</h2>
+			</div>
+
+			<div class="row">
+				<div class="col-1-of-2">
+					<h3 class="heading-tertiary u-margin-bottom-small">Can we use our html canvas as a texel?</h3>
+					<p class="paragraph" style="margin-bottom:8rem;">Yes! You can use your html canvas as a set of texels. However, when it comes to an html canvas that incorporates WebGL context, it might not be possible.
+						Actually, I'm not completely sure about this but I've failed several times when I tried texture mapping using html canvas that has WebGL context. When it comes to an html canvas that has 2D context, however, you're good to go.
+						The mechanism of converting html canvas to a set of texels is really simple. As canvas object provides a built-in API that has a function to convert html canvas to an image, you can use it to yield an image of canvas in one go.
+						By the by, you can convert the canvas to an image by using <code>toDataURL()</code> function. After it, the only thing you have to do is mapping the returned string value to an image object's src property. Now, the image is made and the remaining jobs are completely same as above.
+					</p>
+				</div>
+				<div class="col-1-of-2">
+					<div class="codebox" style="height:28rem;">
+						<div class="code2">
+							<p><span class="keyword">function</span> <span class="function">apply</span>(e) {<br/>
+								&nbsp;&nbsp;<span class="keyword">const</span> can = document.<span class="function">querySelector</span>(<span class="comment">'#canvas'</span>);<br/>
+								&nbsp;&nbsp;<span class="keyword">const</span> dataURL = can.<span class="function">toDataURL</span>();<br/>
+								&nbsp;&nbsp;image.src = dataURL;<br/>
+							}</p>
+						</div>
+					</div>
+				</div>
+			</div>
+        </section>
+
+		<section class="section-experiment">
+			<div class="u-center-text u-margin-bottom-big">
+				<h2 class = "heading-secondary2">
+					🎲Cube testing🎲
+				</h2>
+			</div>
+
+			<div class="row">
+				<div class="container">
+					<div class="experiment2">
+						<canvas id="canvas2" style="border: none;" width="600" height="600"></canvas>
+					</div>
+				</div>
+			</div>
+			<div class="row">
+				<div class="experiment">
+					<div class="col-1-of-2 loc" style="padding: 6rem;">
+						<div class="u-margin-bottom-medium">
+							<h2 class="heading-secondary u-margin-bottom-big">
+								Canvas color
+							</h2>
+							<h2 class="heading-tertiary u-margin-bottom-small">
+								Try changing the canvas color!
+							</h2>
+							<div class="font-pro">
+								<div><input type="range" min="0" max="255" value="255" class="red-slider" id="red">
+									<span>Red Value : <span id="red-value"></span></div>
+								<br/>
+								<div><input type="range" min="0" max="255" value="235" class="green-slider" id="green">
+									<span>Green Value : <span id="green-value"></span></div>
+								<br/>
+								<div><input type="range" min="0" max="255" value="227" class="blue-slider" id="blue">
+									<span>Blue Value : <span id="blue-value"></span></div>
+								<br/>
+								<div><input type="range" min="0" max="255" value="255" class="alpha-slider" id="alpha">
+									<span>Alpha Value : <span id="alpha-value"></span></div>
+							</div>
+						</div>
+					</div>
+					<div class="col-1-of-2 loc" style="padding: 6rem;">
+						<div class="u-margin-bottom-medium">
+							<h2 class="heading-secondary u-margin-bottom-big">
+								FOV
+							</h2>
+							<h2 class="heading-tertiary u-margin-bottom-medium" style="color: white;">
+								Try changing the FOV!
+							</h2>
+							<input style="width:400px" id="fov_range" type="range" min="10" max="170" value="90" oninput="fn_update_fov(this.value);"></input>
+							<span><span id="textFOV" style="color: white;" class="size">90</span></span>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div class="row">
+				<div class="experiment">
+					<div class="col-1-of-2 loc" style="padding: 6rem;">
+						<div class="u-margin-bottom-medium">
+							<h2 class="heading-secondary u-margin-bottom-big">
+								Upload image
+							</h2>
+							<h2 class="heading-tertiary u-margin-bottom-medium">
+								Upload any image you want!
+							</h2>
+							<input id="file" type="file" accept="file_extension|video/*|image/*"/>
+						</div>
+					</div>
+					<div class="col-1-of-2 loc" style="padding: 6rem;">
+						<div class="u-margin-bottom-medium" style="color: white;">
+							<h2 class="heading-secondary u-margin-bottom-big">
+								Parameter
+							</h2>
+							<h2 class="heading-tertiary u-margin-bottom-medium">
+								Try changing the parameters!
+							</h2>
+							<div class ="font-pro">
+								<div style="padding: 10px">TEXTURE_MIN_FILTER: <select onchange="modeChanged_textureMINFILTER()" id="selectTextureModeMINFILTER">
+									<option value="9729">gl.LINEAR</option>
+									<option value="9728" selected>gl.NEAREST</option>
+									<option value="9984">gl.NEAREST_MIPMAP_NEAREST</option>
+									<option value="9985">gl.LINEAR_MIPMAP_NEAREST</option>
+									<option value="9986">gl.NEAREST_MIPMAP_LINEAR</option>
+									<option value="9987">gl.LINEAR_MIPMAP_LINEAR</option>
+								</select></div>
+								<div style="padding: 10px">TEXTURE_MAG_FILTER : <select onchange="modeChanged_textureMAGFILTER()" id="selectTextureModeMAGFILTER">
+									<option value="9729">gl.LINEAR</option>
+									<option value="9728" selected>gl.NEAREST</option>
+								</select></div>
+								<div style="padding: 10px">TEXTURE_WRAP_S : <select onchange="modeChanged_textureWrapS()" id="selectTextureModeWRAPS">
+									<option value="33648">gl.MIRRORED_REPEAT</option>
+									<option value="10497" selected>gl.REPEAT</option>
+									<option value="33071">gl.CLAMP_TO_EDGE</option>
+								</select></div>
+								<div style="padding: 10px">TEXTURE_WRAP_T : <select onchange="modeChanged_textureWrapT()" id="selectTextureModeWRAPT">
+									<option value="33648">gl.MIRRORED_REPEAT</option>
+									<option value="10497" selected>gl.REPEAT</option>
+									<option value="33071">gl.CLAMP_TO_EDGE</option>
+								</select></div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div class="row">
+				<div class="experiment">
+					<div class="col-1-of-2 loc" style="padding: 6rem;">
+						<div class="u-margin-bottom-medium">
+							<h2 class="heading-secondary u-margin-bottom-big">
+								Texture count
+							</h2>
+							<h2 class="heading-tertiary u-margin-bottom-big">
+								Try changing the texture count!
+							</h2>
+							<div class="font-pro">
+								<label for>Texture count : </label>
+								<input class="u-margin-bottom-medium" id="count" type="number" min="1" value="1"></input>
+								<button type="button" onclick="counter()" class="button">update</button>
+							</div>
+						</div>
+					</div>
+					<div class="col-1-of-2 loc" style="padding: 6rem;">
+						<div class="u-margin-bottom-medium" style="color: white;">
+							<h2 class="heading-secondary">
+								HTML Canvas
+							</h2>
+							<h2 class="heading-tertiary u-margin-bottom-small">
+								Try using this 2D canvas as a texture image!
+							</h2>
+							<canvas id="canvas3" class="u-margin-bottom-small" style="border: none;" width="256" height="256"></canvas>
+							<button type="button" onclick="apply()" class="button">update</button>
+						</div>
+
+					</div>
+				</div>
+			</div>
+		</section>
+    </main>
+</body>
