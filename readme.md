@@ -2,7 +2,7 @@
 ### How to do texture mapping?
 
 ## Author
-201720718 Chaejin Lim
+Chaejin Lim
 
 ## File list
 - index.html
